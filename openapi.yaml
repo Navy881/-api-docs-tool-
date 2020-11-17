@@ -1,0 +1,4714 @@
+openapi: 3.0.0
+info:
+  title: AtlasDelivery.API
+  description: Atlas Delivery System API
+  version: v1
+paths:
+  /auth/api/v1/Login:
+    post:
+      tags:
+        - Login
+      summary: Authentication with username and password
+      description: Use this method to login and get the session id using your username and password. Returns the session id on success.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginModel'
+      responses:
+        '200':
+          description: Set Auth cookies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginMessageModel'
+        '400':
+          description: If model not valid
+        '403':
+          description: If username not found or password incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/auth/api/v1/Logout/{sessionId}':
+    post:
+      tags:
+        - Logout
+      summary: Remove authentication
+      description: Use this method to logout from system using your session id. Returns the message “Ok” on success.
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+      responses:
+        '200':
+          description: Remove session with all existed tokens
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '401':
+          description: If session couldn't have found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  /auth/api/v1/Token/sessionId:
+    post:
+      tags:
+        - Token
+      summary: Create new token for existed Auth cookies
+      description: Use this method to get token using your session id. Returns the token and the expiration date of the token on success.
+      parameters:
+        - name: sessionId
+          in: query
+          schema:
+            type: string
+            nullable: true
+      responses:
+        '201':
+          description: Created token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenModel'
+        '401':
+          description: If session couldn't have found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  /resources/api/carriers:
+    post:
+      tags:
+        - Carriers
+      summary: Create carrier
+      operationId: Carriers_Create
+      requestBody:
+        x-name: model
+        description: model for create
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarrierModel'
+        required: true
+        x-position: 1
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarrierModel'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  /resources/api/carriers/All:
+    get:
+      tags:
+        - Carriers
+      summary: Get all carriers
+      operationId: Carriers_GetAll
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CarrierModel'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/carriers/{carrierId}':
+    get:
+      tags:
+        - Carriers
+      summary: Get carrier by id
+      operationId: Carriers_Get
+      parameters:
+        - name: carrierId
+          in: path
+          required: true
+          description: Id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarrierModel'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+    put:
+      tags:
+        - Carriers
+      summary: Update carrier by id
+      operationId: Carriers_Update
+      parameters:
+        - name: carrierId
+          in: path
+          required: true
+          description: Id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: model for update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarrierModel'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarrierModel'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/carriers/external/{externalId}':
+    get:
+      tags:
+        - Carriers
+      summary: Get carrier by external id
+      operationId: Carriers_GetByExternal
+      parameters:
+        - name: externalId
+          in: path
+          required: true
+          description: Id from external system\
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarrierModel'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+    put:
+      tags:
+        - Carriers
+      summary: Update carrier by external id
+      operationId: Carriers_UpdateByExternalId
+      parameters:
+        - name: externalId
+          in: path
+          required: true
+          description: Id from external system
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: model for update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarrierModel'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarrierModel'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  /resources/api/hubs:
+    post:
+      tags:
+        - Hubs
+      summary: Create hub
+      operationId: Hubs_Create
+      requestBody:
+        x-name: model
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertHubRequest'
+        required: true
+        x-position: 1
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubModel'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  /resources/api/hubs/all:
+    get:
+      tags:
+        - Hubs
+      summary: |-
+        Get all hubs
+                    
+      operationId: Hubs_GetAll
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HubModel'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/hubs/{hubId}':
+    get:
+      tags:
+        - Hubs
+      summary: |-
+        Get hub by id
+                    
+      operationId: Hubs_Get
+      parameters:
+        - name: hubId
+          in: path
+          required: true
+          description: Id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubModel'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+    put:
+      tags:
+        - Hubs
+      summary: Update hub
+      operationId: Hubs_Update
+      parameters:
+        - name: hubId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: model
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertHubRequest'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubModel'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/hubs/external/{externalId}':
+    get:
+      tags:
+        - Hubs
+      summary: Get hub by external id
+      operationId: Hubs_GetByExternalId
+      parameters:
+        - name: externalId
+          in: path
+          required: true
+          description: External id
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HubModel'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/carriers/{carrierId}/users':
+    post:
+      tags:
+        - Users
+      summary: Create user for carrier
+      operationId: Users_CreateForCarrierById
+      parameters:
+        - name: carrierId
+          in: path
+          required: true
+          description: carrier id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: model for create
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserModel'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserModel'
+        '400':
+          description: If model not valid
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If carrier not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/carriers/external/{carrierExternalId}/users':
+    post:
+      tags:
+        - Users
+      summary: Create user for carrier
+      operationId: Users_CreateForCarrierByExternalId
+      parameters:
+        - name: carrierExternalId
+          in: path
+          required: true
+          description: carrier id from external system
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: model for create
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserModel'
+        required: true
+        x-position: 2
+      responses:
+        '201':
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserModel'
+        '400':
+          description: If model not valid
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If carrier not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/companies/{companyId}/users':
+    get:
+      tags:
+        - Users
+      summary: Get all users for company id
+      operationId: Users_GetAllForCompanyId
+      parameters:
+        - name: companyId
+          in: path
+          required: true
+          description: company id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserModel'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/companies/external/{externalId}/users':
+    get:
+      tags:
+        - Users
+      summary: Get all users for external company id
+      operationId: Users_GetAllForCompanyExternalId
+      parameters:
+        - name: externalId
+          in: path
+          required: true
+          description: company id from external system
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      responses:
+        '200':
+          description: Users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserModel'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/users/{userId}':
+    get:
+      tags:
+        - Users
+      summary: Get user by id
+      operationId: Users_Get
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      responses:
+        '200':
+          description: Person
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserModel'
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+    put:
+      tags:
+        - Users
+      summary: Update user
+      operationId: Users_UpdateById
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: model for update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserModel'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserModel'
+        '400':
+          description: If model not valid
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/users/external/{externalId}':
+    get:
+      tags:
+        - Users
+      summary: Find user by external id
+      operationId: Users_FindByExternalId
+      parameters:
+        - name: externalId
+          in: path
+          required: true
+          description: externalId
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      responses:
+        '200':
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserModel'
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+    put:
+      tags:
+        - Users
+      summary: Update user
+      operationId: Users_UpdateByExternalId
+      parameters:
+        - name: externalId
+          in: path
+          required: true
+          description: user id from external system
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: model for update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserModel'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserModel'
+        '400':
+          description: If model not valid
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/users/{userId}/roles':
+    post:
+      tags:
+        - UserRoles
+      summary: |-
+        Assign a set roles to the user
+                    
+      operationId: UserRoles_Set
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: user identifier from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: assigning model
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetUserRolesRequest'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: All user roles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+    put:
+      tags:
+        - UserRoles
+      summary: |-
+        Assign a set roles to the user
+                    
+      operationId: UserRoles_Assign
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: user identifier from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: set up model
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignRolesToUserRequest'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: All user roles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '422':
+          description: If model not valid
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+    delete:
+      tags:
+        - UserRoles
+      summary: |-
+        Assign a set roles to the user
+                    
+      operationId: UserRoles_Remove
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: user identifier from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+        - name: Roles
+          in: query
+          schema:
+            type: array
+            maxItems: 100
+            nullable: true
+            items:
+              type: string
+          x-position: 2
+      responses:
+        '200':
+          description: Success message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '422':
+          description: If model not valid
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+  '/resources/api/carriers/{carrierId}/persons':
+    post:
+      tags:
+        - Persons
+      summary: Create person for carrier
+      operationId: Persons_CreateForCarrierById
+      parameters:
+        - name: carrierId
+          in: path
+          required: true
+          description: carrier id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: model for create
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonModel'
+        required: true
+        x-position: 2
+      responses:
+        '201':
+          description: Created person
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonModel'
+        '400':
+          description: If model not valid
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If carrier not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/carriers/external/{carrierExternalId}/persons':
+    post:
+      tags:
+        - Persons
+      summary: Create person for carrier
+      operationId: Persons_CreateForCarrierByExternalId
+      parameters:
+        - name: carrierExternalId
+          in: path
+          required: true
+          description: carrier id from external system
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: model for create
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonModel'
+        required: true
+        x-position: 2
+      responses:
+        '201':
+          description: Created person
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonModel'
+        '400':
+          description: If model not valid
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If carrier not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/companies/{companyId}/persons':
+    get:
+      tags:
+        - Persons
+      summary: Get all persons for company id
+      operationId: Persons_GetAllForCompanyId
+      parameters:
+        - name: companyId
+          in: path
+          required: true
+          description: company id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      responses:
+        '200':
+          description: Persons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PersonModel'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/companies/external/{externalId}/persons':
+    get:
+      tags:
+        - Persons
+      summary: Get all persons for external company id
+      operationId: Persons_GetAllForCompanyExternalId
+      parameters:
+        - name: externalId
+          in: path
+          required: true
+          description: company id from external system
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      responses:
+        '200':
+          description: Persons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PersonModel'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/persons/{personId}':
+    get:
+      tags:
+        - Persons
+      summary: Get person by id
+      operationId: Persons_Get
+      parameters:
+        - name: personId
+          in: path
+          required: true
+          description: Id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      responses:
+        '200':
+          description: Person
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonModel'
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If person not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+    put:
+      tags:
+        - Persons
+      summary: Update person
+      operationId: Persons_UpdateById
+      parameters:
+        - name: personId
+          in: path
+          required: true
+          description: id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: model for update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonModel'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: Updated person
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonModel'
+        '400':
+          description: If model not valid
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If person not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/persons/external/{externalId}':
+    get:
+      tags:
+        - Persons
+      summary: Find person by external id
+      operationId: Persons_FindByExternalId
+      parameters:
+        - name: externalId
+          in: path
+          required: true
+          description: externalId
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      responses:
+        '200':
+          description: Person
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonModel'
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If person not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+    put:
+      tags:
+        - Persons
+      summary: Update person
+      operationId: Persons_UpdateByExternalId
+      parameters:
+        - name: externalId
+          in: path
+          required: true
+          description: person id from external system
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: model for update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonModel'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: Updated person
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonModel'
+        '400':
+          description: If model not valid
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If person not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/carriers/{carrierId}/transports':
+    post:
+      tags:
+        - Transports
+      summary: Create transport for carrier
+      operationId: Transports_CreateForCarrierById
+      parameters:
+        - name: carrierId
+          in: path
+          required: true
+          description: carrier id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: model for create
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransportInfoModel'
+        required: true
+        x-position: 2
+      responses:
+        '201':
+          description: Created transport
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransportModel'
+        '400':
+          description: If model not valid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If carrier not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/carriers/external/{carrierExternalId}/transports':
+    post:
+      tags:
+        - Transports
+      summary: Create transport for carrier
+      operationId: Transports_CreateForCarrierByExternalId
+      parameters:
+        - name: carrierExternalId
+          in: path
+          required: true
+          description: carrier id from external system
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: model for create
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransportInfoModel'
+        required: true
+        x-position: 2
+      responses:
+        '201':
+          description: Created transport
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransportModel'
+        '400':
+          description: If model not valid
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If carrier not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/companies/{companyId}/transports':
+    get:
+      tags:
+        - Transports
+      summary: Get transports by company id
+      operationId: Transports_FindByCompanyId
+      parameters:
+        - name: companyId
+          in: path
+          required: true
+          description: company id
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      responses:
+        '200':
+          description: Transports
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransportModel'
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/companies/external/{externalId}/transports':
+    get:
+      tags:
+        - Transports
+      summary: Get transports for external company id
+      operationId: Transports_GetAllForCompanyExternalId
+      parameters:
+        - name: externalId
+          in: path
+          required: true
+          description: company id from external system
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      responses:
+        '200':
+          description: Transports
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransportModel'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/transports/{transportId}':
+    get:
+      tags:
+        - Transports
+      summary: Get transport by id
+      operationId: Transports_GetById
+      parameters:
+        - name: transportId
+          in: path
+          required: true
+          description: Id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      responses:
+        '200':
+          description: Transport
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransportModel'
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If transport not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+    put:
+      tags:
+        - Transports
+      summary: Update transport
+      operationId: Transports_UpdateById
+      parameters:
+        - name: transportId
+          in: path
+          required: true
+          description: id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: model for update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransportInfoModel'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: Updated transport
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransportModel'
+        '400':
+          description: If model not valid
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If transport not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/resources/api/transports/external/{externalId}':
+    get:
+      tags:
+        - Transports
+      summary: Find transport by external id
+      operationId: Transports_FindByExternalId
+      parameters:
+        - name: externalId
+          in: path
+          required: true
+          description: externalId
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      responses:
+        '200':
+          description: Transport
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransportModel'
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If transport not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+    put:
+      tags:
+        - Transports
+      summary: Update transport
+      operationId: Transports_UpdateByExternalId
+      parameters:
+        - name: externalId
+          in: path
+          required: true
+          description: transport id from external system
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: model for update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransportInfoModel'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: Updated transport
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransportModel'
+        '400':
+          description: If model not valid
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '401':
+          description: If not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: If transport not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  /oms/api/Orders:
+    post:
+      tags:
+        - Orders
+      summary: |-
+        Create new order.
+                    
+        If x-atlas-additional-unique-constraints header is added,
+        existing order is looked up with provided constraints.
+                    
+        Example: x-atlas-additional-unique-constraints: OrderInfo.ExternalId,OrderInfo.Number.
+        Searching an existing order by the external ID first, then, if none found, by the order number.
+        Search values are taken from the request body.
+      operationId: Orders_Create
+      requestBody:
+        x-name: model
+        description: data for create
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+        required: true
+        x-position: 1
+      responses:
+        '201':
+          description: Created order or existing one if the existing one found with header x-atlas-additional-unique-constraints
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: If data is invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelStateDictionary'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/orderquilt/api/Orders/{orderId}':
+    get:
+      tags:
+        - Orders
+      summary: Get order by id
+      operationId: Orders_Get
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: Id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedOrder'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/orderquilt/api/Orders/external/{externalId}':
+    get:
+      tags:
+        - Orders
+      summary: Get order by external id
+      operationId: Orders_Get2
+      parameters:
+        - name: externalId
+          in: path
+          required: true
+          description: Id from external system or integration
+          schema:
+            type: string
+            nullable: true
+          x-position: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedOrder'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/orderquilt/api/Orders/{orderId}/Cancel':
+    put:
+      tags:
+        - Orders
+      summary: 'Sets order to Cancelled state, completes all tasks'
+      operationId: Orders_CancelOrder
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: info
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderStateChangeInfo'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+  '/orderquilt/api/Orders/LastModified/{modifiedAfter}':
+    get:
+      tags:
+        - Orders
+      summary: Get last modified orders with performers
+      operationId: Orders_GetLastModified
+      parameters:
+        - name: modifiedAfter
+          in: path
+          required: true
+          schema:
+            type: string
+            format: date-time
+            nullable: true
+          x-position: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExtendedOrder'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: string
+  '/orderquilt/api/OrderTasks/{orderTaskId}/Load/Complete':
+    put:
+      tags:
+        - OrderTasks
+      operationId: OrderTasks_LoadComplete
+      parameters:
+        - name: orderTaskId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: info
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoadCompleteInfo'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel2'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel2'
+  '/orderquilt/api/OrderTasks/{orderTaskId}/Delivery/Complete':
+    put:
+      tags:
+        - OrderTasks
+      operationId: OrderTasks_DeliveryComplete
+      parameters:
+        - name: orderTaskId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: info
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryCompleteInfo'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel2'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel2'
+  '/orderquilt/api/OrderTasks/{orderTaskId}/Return/Complete':
+    put:
+      tags:
+        - OrderTasks
+      operationId: OrderTasks_ReturnComplete
+      parameters:
+        - name: orderTaskId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: info
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderTaskCompleteInfo'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel2'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel2'
+  '/orderquilt/api/OrderTasks/{orderTaskId}/PickUp/Complete':
+    put:
+      tags:
+        - OrderTasks
+      operationId: OrderTasks_PickUpComplete
+      parameters:
+        - name: orderTaskId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: info
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderTaskCompleteInfo'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel2'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel2'
+  '/orderquilt/api/Orders/{orderId}/Payment/Payments':
+    put:
+      tags:
+        - Payments
+      summary: Update payment info by order id
+      operationId: Payments_SetPaymentInfo
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: Id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: data for update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuiltPaymentInfo'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuiltPaymentInfo'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/orderquilt/api/Orders/{orderId}/Payment/PaymentStateInfo':
+    put:
+      tags:
+        - Payments
+      summary: Update state info by order id
+      operationId: Payments_SetPaymentStateInfo
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: Id from Atlas
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: model
+        description: data for update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuiltPaymentStateInfo'
+        required: true
+        x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuiltPaymentStateInfo'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/orderquilt/api/Orders/States/{createdAfter}':
+    get:
+      tags:
+        - OrderStates
+      summary: Get last created states
+      operationId: OrderStates_Get
+      parameters:
+        - name: createdAfter
+          in: path
+          required: true
+          description: Search filter
+          schema:
+            type: string
+            format: date-time
+          x-position: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LastModifiedStates'
+  /orderquilt/api/Tracking/Persons:
+    get:
+      tags:
+        - Tracking
+      summary: Get all persons with latest positions for current company and descendant
+      operationId: Tracking_AllPersons
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CompanyPerson'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+  /routeauctionquilt/api/lots:
+    post:
+      tags:
+        - Lots
+      operationId: Lots_Create
+      requestBody:
+        x-name: model
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRouteLotRequest'
+        required: true
+        x-position: 1
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteLot'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+  '/routeauctionquilt/api/lots/{lotId}/bets':
+    post:
+      tags:
+        - Bets
+      operationId: Bets_AddToLot
+      parameters:
+        - name: lotId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      requestBody:
+        x-name: model
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddBetToRouteLotRequest'
+        required: true
+        x-position: 2
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BetModel'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '422':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+  '/routeauctionquilt/api/routes/{routeId}/lots':
+    get:
+      tags:
+        - Lots
+      operationId: Lots_GetAllByRoute
+      parameters:
+        - name: routeId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+        - name: Bets.WithBidderInfo
+          in: query
+          schema:
+            type: boolean
+          x-position: 2
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RouteLot'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+  '/routeauctionquilt/api/lots/{lotId}/cancel':
+    put:
+      tags:
+        - Lots
+      operationId: Lots_Cancel
+      parameters:
+        - name: lotId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: guid
+          x-position: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteLot'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageModel'
+components:
+  schemas:
+    MessageModel:
+      type: object
+      description: About response
+      additionalProperties: false
+      properties:
+        message:
+          type: string
+          description: Api name
+          nullable: true
+        version:
+          type: string
+          description: Api version
+          nullable: true
+    LoginModel:
+      required:
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    LoginMessageModel:
+      type: object
+      properties:
+        message:
+          type: string
+          nullable: true
+        sessionId:
+          type: string
+          nullable: true
+    TokenModel:
+      type: object
+      properties:
+        token:
+          type: string
+          nullable: true
+        expiredAt:
+          type: string
+          format: date-time
+    Entity:
+      type: object
+      additionalProperties: false
+      properties:
+        Id:
+          type: string
+          format: guid
+        Audit:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/Audit'
+    Audit:
+      type: object
+      additionalProperties: false
+      properties:
+        Initiator:
+          type: string
+          format: guid
+        Source:
+          type: string
+          nullable: true
+        Description:
+          type: string
+          nullable: true
+        Comment:
+          type: string
+          nullable: true
+        CreatedOn:
+          type: string
+          format: date-time
+        Logged:
+          type: string
+          format: date-time
+        IsDeleted:
+          type: boolean
+    HubModel:
+      allOf:
+        - $ref: '#/components/schemas/CompanyModel'
+        - type: object
+          additionalProperties: false
+          required:
+            - ServiceTime
+          properties:
+            TownCode:
+              type: string
+              nullable: true
+            Inn:
+              type: string
+              nullable: true
+            Kpp:
+              type: string
+              nullable: true
+            ContractNumber:
+              type: string
+              nullable: true
+            Phone:
+              type: string
+              nullable: true
+            Description:
+              type: string
+              nullable: true
+            ServiceTime:
+              $ref: '#/components/schemas/ServiceTimeModel'
+    ServiceTimeModel:
+      type: object
+      additionalProperties: false
+      properties:
+        OnArriving:
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+          nullable: true
+        OnDeparture:
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+          nullable: true
+    CompanyModel:
+      type: object
+      additionalProperties: false
+      properties:
+        Id:
+          type: string
+          format: guid
+        ExternalId:
+          type: string
+          nullable: true
+        ParentCompanyId:
+          type: string
+          format: guid
+          nullable: true
+        Name:
+          type: string
+          nullable: true
+        StorageLatitude:
+          type: number
+          format: double
+          nullable: true
+        StorageLongitude:
+          type: number
+          format: double
+          nullable: true
+        Address:
+          type: string
+          nullable: true
+        From:
+          type: string
+          format: date-time
+          nullable: true
+        To:
+          type: string
+          format: date-time
+          nullable: true
+        Types:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/CompanyType'
+        TimeZone:
+          type: string
+          nullable: true
+    CompanyType:
+      type: string
+      description: ''
+      x-enumNames:
+        - Default
+        - Consignor
+        - Carrier
+        - Forwarder
+        - Hub
+      enum:
+        - Default
+        - Consignor
+        - Carrier
+        - Forwarder
+        - Hub
+    PreferredPersonModel:
+      type: object
+      additionalProperties: false
+      required:
+        - PersonId
+        - Index
+      properties:
+        PersonId:
+          type: string
+          format: guid
+          minLength: 1
+        Index:
+          type: integer
+          format: int32
+    CarrierModel:
+      type: object
+      additionalProperties: false
+      properties:
+        Id:
+          type: string
+          format: guid
+        Name:
+          type: string
+          nullable: true
+        ExternalId:
+          type: string
+          nullable: true
+        Inn:
+          type: string
+          nullable: true
+        Kpp:
+          type: string
+          nullable: true
+        ContractNumber:
+          type: string
+          nullable: true
+        Phone:
+          type: string
+          nullable: true
+        Types:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/CompanyType'
+    LoadUnloadTypeModel:
+      type: object
+      additionalProperties: false
+      properties:
+        LoadUnloadType:
+          type: string
+          nullable: true
+    LoadUnloadRestrictionModel:
+      type: object
+      additionalProperties: false
+      properties:
+        LoadUnloadRestriction:
+          type: string
+          nullable: true
+    UpsertHubRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - StorageLatitude
+        - StorageLongitude
+        - TimeZone
+        - ServiceTime
+      properties:
+        ParentCompanyId:
+          type: string
+          format: guid
+          nullable: true
+        ExternalId:
+          type: string
+          nullable: true
+        Name:
+          type: string
+          nullable: true
+        StorageLatitude:
+          type: number
+          format: double
+        StorageLongitude:
+          type: number
+          format: double
+        Address:
+          type: string
+          nullable: true
+        From:
+          type: string
+          format: date-time
+          nullable: true
+        To:
+          type: string
+          format: date-time
+          nullable: true
+        TimeZone:
+          type: string
+          minLength: 1
+        TownCode:
+          type: string
+          nullable: true
+        Inn:
+          type: string
+          nullable: true
+        Kpp:
+          type: string
+          nullable: true
+        ContractNumber:
+          type: string
+          nullable: true
+        Phone:
+          type: string
+          nullable: true
+        Description:
+          type: string
+          nullable: true
+        ServiceTime:
+          $ref: '#/components/schemas/ServiceTimeRequest'
+    ServiceTimeRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        OnArriving:
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+          nullable: true
+        OnDeparture:
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: 1
+          nullable: true
+    PersonModel:
+      type: object
+      additionalProperties: false
+      properties:
+        Id:
+          type: string
+          format: guid
+        ExternalId:
+          type: string
+          nullable: true
+        CompanyId:
+          type: string
+          format: guid
+        Username:
+          type: string
+          nullable: true
+        NicName:
+          type: string
+          nullable: true
+        FirstName:
+          type: string
+          nullable: true
+        LastName:
+          type: string
+          nullable: true
+        Patronymic:
+          type: string
+          nullable: true
+        Phone:
+          type: string
+          nullable: true
+        CashDeviceType:
+          type: string
+          nullable: true
+        CashDeviceId:
+          type: string
+          nullable: true
+        HasCashDevice:
+          type: boolean
+        IsParticipatingInFuelProgram:
+          type: boolean
+    TransportModel:
+      allOf:
+        - $ref: '#/components/schemas/TransportInfoModel'
+        - type: object
+          additionalProperties: false
+          properties:
+            Id:
+              type: string
+              format: guid
+    TransportInfoModel:
+      type: object
+      additionalProperties: false
+      required:
+        - WeightType
+      properties:
+        ExternalId:
+          type: string
+          nullable: true
+        CompanyId:
+          type: string
+          format: guid
+        Type:
+          type: string
+          nullable: true
+        Trademark:
+          type: string
+          nullable: true
+        Number:
+          type: string
+          nullable: true
+        Color:
+          type: string
+          nullable: true
+        Volume:
+          type: number
+          format: decimal
+        Cost:
+          type: number
+          format: decimal
+          nullable: true
+        TakesTime:
+          type: integer
+          format: int32
+          nullable: true
+        Weight:
+          type: number
+          format: decimal
+        WeightType:
+          type: integer
+          format: int32
+        PalletCapacity:
+          type: number
+          format: decimal
+        TransportType:
+          type: string
+          nullable: true
+        BoardHeight:
+          type: string
+          nullable: true
+        LoadUnloadTypes:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/LoadUnloadTypeModel'
+        LoadUnloadRestrictions:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/LoadUnloadRestrictionModel'
+        ZoneRestrictions:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/ZoneRestrictionModel'
+        PreferredPersons:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/PreferredPersonModel'
+    ZoneRestrictionModel:
+      type: object
+      additionalProperties: false
+      properties:
+        ZoneRestriction:
+          type: string
+          nullable: true
+    SetUserRolesRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - Roles
+      properties:
+        Roles:
+          type: array
+          maxItems: 100
+          minItems: 1
+          items:
+            type: string
+    AssignRolesToUserRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - Roles
+      properties:
+        Roles:
+          type: array
+          maxItems: 100
+          minItems: 1
+          items:
+            type: string
+    UserModel:
+      type: object
+      additionalProperties: false
+      required:
+        - Username
+        - Email
+        - Phone
+      properties:
+        Id:
+          type: string
+          format: guid
+        ExternalId:
+          type: string
+          nullable: true
+        Username:
+          type: string
+          minLength: 1
+        Email:
+          type: string
+          minLength: 1
+        Phone:
+          type: string
+          minLength: 1
+        FirstName:
+          type: string
+          nullable: true
+        LastName:
+          type: string
+          nullable: true
+    MessageModel2:
+      type: object
+      additionalProperties: false
+      properties:
+        Message:
+          type: string
+          nullable: true
+    OrderInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - ExternalId
+            - Number
+            - OperationType
+          properties:
+            ExternalId:
+              type: string
+              minLength: 1
+            OriginalAddress:
+              type: string
+              nullable: true
+            Number:
+              type: string
+              minLength: 1
+            OperationType:
+              $ref: '#/components/schemas/OrderOperation'
+    OrderOperation:
+      type: string
+      description: ''
+      x-enumNames:
+        - Delivery
+        - PickUp
+      enum:
+        - Delivery
+        - PickUp
+    ExtendedOrder:
+      allOf:
+        - $ref: '#/components/schemas/Order'
+        - type: object
+          additionalProperties: false
+          properties:
+            routes:
+              type: array
+              nullable: true
+              items:
+                $ref: '#/components/schemas/ExtendedRoute'
+    ExtendedRoute:
+      type: object
+      additionalProperties: false
+      properties:
+        routeId:
+          type: string
+          format: guid
+        routeInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/RouteInfo'
+        routeStateInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/RouteStateInfo'
+        routePoints:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/ReducedRoutePoint'
+        performerInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/PerformerInfo'
+        transportRestrictionsInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/TransportRestrictionsInfo'
+    RouteInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity2'
+        - type: object
+          additionalProperties: false
+          required:
+            - Name
+            - Start
+            - End
+          properties:
+            Name:
+              type: string
+              minLength: 1
+            Start:
+              type: string
+              format: date-time
+              minLength: 1
+            End:
+              type: string
+              format: date-time
+              minLength: 1
+            ExternalId:
+              type: string
+              nullable: true
+    Entity2:
+      type: object
+      additionalProperties: false
+      properties:
+        Id:
+          type: string
+          format: guid
+        Audit:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/Audit2'
+    Audit2:
+      type: object
+      additionalProperties: false
+      properties:
+        Initiator:
+          type: string
+          format: guid
+        Source:
+          type: string
+          nullable: true
+        Description:
+          type: string
+          nullable: true
+        Logged:
+          type: string
+          format: date-time
+        CreatedOn:
+          type: string
+          format: date-time
+        IsDeleted:
+          type: boolean
+    RouteStateInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity2'
+        - type: object
+          additionalProperties: false
+          required:
+            - State
+          properties:
+            State:
+              $ref: '#/components/schemas/RouteState'
+    RouteState:
+      type: string
+      description: ''
+      x-enumNames:
+        - Created
+        - Planning
+        - NotPlanned
+        - Planned
+        - CarrierAssigning
+        - CarrierNotAssigned
+        - CarrierAssigned
+        - CarrierAccepted
+        - CarrierRejected
+        - PerformerAssigning
+        - PerformerNotAssigned
+        - PerformerAssigned
+        - SentToPerformer
+        - PerformerAccepted
+        - PerformerRejected
+        - Prestart
+        - ArrivedForLoading
+        - ReadyForLoading
+        - LoadingStarted
+        - LoadingFinished
+        - Started
+        - ArrivingForUnloading
+        - ReadyForUnloading
+        - UnloadingStarted
+        - UnloadingFinished
+        - Finished
+        - Returning
+        - Completed
+      enum:
+        - Created
+        - Planning
+        - NotPlanned
+        - Planned
+        - CarrierAssigning
+        - CarrierNotAssigned
+        - CarrierAssigned
+        - CarrierAccepted
+        - CarrierRejected
+        - PerformerAssigning
+        - PerformerNotAssigned
+        - PerformerAssigned
+        - SentToPerformer
+        - PerformerAccepted
+        - PerformerRejected
+        - Prestart
+        - ArrivedForLoading
+        - ReadyForLoading
+        - LoadingStarted
+        - LoadingFinished
+        - Started
+        - ArrivingForUnloading
+        - ReadyForUnloading
+        - UnloadingStarted
+        - UnloadingFinished
+        - Finished
+        - Returning
+        - Completed
+    ReducedRoutePoint:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: guid
+        routePointInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/CommonRoutePointInfo'
+        routePointStateInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/RoutePointStateInfo'
+        locationInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/LocationInfo'
+        orderTaskId:
+          type: string
+          format: guid
+        orderTaskStateInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/OrderTaskStateInfo'
+    CommonRoutePointInfo:
+      type: object
+      additionalProperties: false
+      properties:
+        pointType:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/PointType'
+        order:
+          type: integer
+          format: int32
+        planningTime:
+          type: string
+          format: date-time
+    PointType:
+      type: string
+      description: ''
+      x-enumNames:
+        - Load
+        - Delivery
+        - PickUp
+        - Return
+      enum:
+        - Load
+        - Delivery
+        - PickUp
+        - Return
+    RoutePointStateInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity2'
+        - type: object
+          additionalProperties: false
+          required:
+            - State
+          properties:
+            State:
+              $ref: '#/components/schemas/RoutePointState'
+    RoutePointState:
+      type: string
+      description: ''
+      x-enumNames:
+        - Created
+        - ReadyForWorkStart
+        - WorkStarted
+        - WorkFinished
+        - Cancelled
+        - ReachedTheZone
+        - ArrivalApproved
+        - Arrived
+        - ReadyToLeave
+        - Left
+        - Completed
+      enum:
+        - Created
+        - ReadyForWorkStart
+        - WorkStarted
+        - WorkFinished
+        - Cancelled
+        - ReachedTheZone
+        - ArrivalApproved
+        - Arrived
+        - ReadyToLeave
+        - Left
+        - Completed
+    LocationInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity2'
+        - type: object
+          additionalProperties: false
+          required:
+            - Longitude
+            - Latitude
+          properties:
+            Longitude:
+              type: number
+              format: double
+            Latitude:
+              type: number
+              format: double
+    OrderTaskStateInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity2'
+        - type: object
+          additionalProperties: false
+          required:
+            - State
+          properties:
+            State:
+              $ref: '#/components/schemas/OrderTaskState'
+    OrderTaskState:
+      type: string
+      description: ''
+      x-enumNames:
+        - Created
+        - Started
+        - Completed
+      enum:
+        - Created
+        - Started
+        - Completed
+    PerformerInfo:
+      type: object
+      additionalProperties: false
+      properties:
+        transport:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/TransportModel'
+        persons:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/PersonModel'
+        company:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/CompanyModel'
+        carrier:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/CarrierModel'
+    TransportRestrictionsInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity2'
+        - type: object
+          additionalProperties: false
+          properties:
+            LoadUnloadTypes:
+              type: array
+              nullable: true
+              items:
+                type: string
+            TransportRestrictions:
+              type: array
+              nullable: true
+              items:
+                type: string
+            TypedRestrictions:
+              type: array
+              nullable: true
+              items:
+                $ref: '#/components/schemas/TypedRestriction'
+    TypedRestriction:
+      type: object
+      discriminator:
+        propertyName: discriminator
+        mapping:
+          WeightTypeRestriction: '#/components/schemas/WeightTypeRestriction'
+          PassRestriction: '#/components/schemas/PassRestriction'
+      x-abstract: true
+      additionalProperties: false
+      required:
+        - discriminator
+      properties:
+        discriminator:
+          type: string
+    Order:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - OrderInfo
+            - ContactInfo
+          properties:
+            OrderInfo:
+              $ref: '#/components/schemas/OrderInfo'
+            AllocationInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/AllocationInfo'
+            CompanyInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/CompanyInfo'
+            ConsigneeInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/ConsigneeInfo'
+            HubInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/HubInfo'
+            CarrierInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/CarrierInfo'
+            LoadTimeSlot:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/LoadTimeSlot'
+            DeliveryTimeSlot:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/DeliveryTimeSlot'
+            PickupTimeSlot:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/PickupTimeSlot'
+            ReturnTimeSlot:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/ReturnTimeSlot'
+            ContactInfo:
+              $ref: '#/components/schemas/ContactInfo'
+            AddressInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/AddressInfo'
+            GeoZoneInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/GeoZoneInfo'
+            TransportRestrictionsInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/TransportRestrictionsInfo2'
+            LocationInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/LocationInfo2'
+            StateInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/StateInfo'
+            ServiceInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/ServiceInfo'
+            Services:
+              type: array
+              nullable: true
+              items:
+                $ref: '#/components/schemas/ServiceInfo'
+            Confirmation:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/Confirmation'
+            Payment:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/Payment'
+            Products:
+              type: array
+              nullable: true
+              items:
+                $ref: '#/components/schemas/ProductInfo'
+            Comments:
+              type: array
+              nullable: true
+              items:
+                $ref: '#/components/schemas/CommentInfo'
+            LastModifiedOn:
+              type: string
+              format: date-time
+            ArchiveAudit:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/Audit'
+            TacticalLegInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/TacticalLegInfo'
+            Tags:
+              type: array
+              nullable: true
+              items:
+                $ref: '#/components/schemas/TagInfo'
+            VerifiedInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/VerifiedInfo'
+    AllocationInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          properties:
+            RouteExternalId:
+              type: string
+              nullable: true
+            HubCode:
+              type: string
+              nullable: true
+            CarrierCode:
+              type: string
+              nullable: true
+            RouteName:
+              type: string
+              nullable: true
+            TacticalLegExternalId:
+              type: string
+              nullable: true
+            TransportNumber:
+              type: string
+              nullable: true
+    CompanyInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - CompanyId
+          properties:
+            CompanyId:
+              type: string
+              format: guid
+              minLength: 1
+    ConsigneeInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          properties:
+            Consignee:
+              type: string
+              nullable: true
+            Company:
+              type: string
+              nullable: true
+    HubInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - HubId
+          properties:
+            HubId:
+              type: string
+              format: guid
+              minLength: 1
+    CarrierInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - CarrierId
+          properties:
+            CarrierId:
+              type: string
+              format: guid
+              minLength: 1
+    LoadTimeSlot:
+      allOf:
+        - $ref: '#/components/schemas/TimeSlot2'
+        - type: object
+          additionalProperties: false
+    TimeSlot2:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - From
+            - To
+          properties:
+            From:
+              type: string
+              format: date-time
+              minLength: 1
+            To:
+              type: string
+              format: date-time
+              minLength: 1
+    DeliveryTimeSlot:
+      allOf:
+        - $ref: '#/components/schemas/TimeSlot2'
+        - type: object
+          additionalProperties: false
+    PickupTimeSlot:
+      allOf:
+        - $ref: '#/components/schemas/TimeSlot2'
+        - type: object
+          additionalProperties: false
+    ReturnTimeSlot:
+      allOf:
+        - $ref: '#/components/schemas/TimeSlot2'
+        - type: object
+          additionalProperties: false
+    ContactInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          properties:
+            Name:
+              type: string
+              nullable: true
+            Phones:
+              type: array
+              nullable: true
+              items:
+                type: string
+            Emails:
+              type: array
+              nullable: true
+              items:
+                type: string
+    AddressInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          properties:
+            FullAddress:
+              type: string
+              nullable: true
+            Country:
+              type: string
+              nullable: true
+            PostalCode:
+              type: string
+              nullable: true
+            Region:
+              type: string
+              nullable: true
+            District:
+              type: string
+              nullable: true
+            Town:
+              type: string
+              nullable: true
+            TownRegion:
+              type: string
+              nullable: true
+            Street:
+              type: string
+              nullable: true
+            Station:
+              type: string
+              nullable: true
+            Building:
+              type: string
+              nullable: true
+            Housing:
+              type: string
+              nullable: true
+            Porch:
+              type: string
+              nullable: true
+            Floor:
+              type: string
+              nullable: true
+            Room:
+              type: string
+              nullable: true
+    GeoZoneInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - ZoneId
+          properties:
+            ZoneId:
+              type: string
+              format: guid
+              minLength: 1
+    TransportRestrictionsInfo2:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - LoadUnloadTypes
+            - TransportRestrictions
+          properties:
+            LoadUnloadTypes:
+              type: array
+              items:
+                type: string
+            TransportRestrictions:
+              type: array
+              items:
+                type: string
+    LocationInfo2:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - Longitude
+            - Latitude
+          properties:
+            Longitude:
+              type: number
+              format: double
+            Latitude:
+              type: number
+              format: double
+    StateInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - State
+          properties:
+            State:
+              $ref: '#/components/schemas/OrderState'
+    OrderState:
+      type: string
+      description: ''
+      x-enumNames:
+        - Created
+        - Validating
+        - IncorrectData
+        - CorrectData
+        - Geocoding
+        - Geocoded
+        - NotGeocoded
+        - Allocating
+        - Allocated
+        - NotAllocated
+        - TimeZoneCorrecting
+        - TimeZoneCorrected
+        - TimeZoneNotCorrected
+        - ReadyForPlanning
+        - ReadyForAssigning
+        - Planning
+        - Planned
+        - Loaded
+        - OnItsWay
+        - Arriving
+        - Arrived
+        - Started
+        - Completed
+        - Cancelled
+        - Pending
+        - NotPlanned
+      enum:
+        - Created
+        - Validating
+        - IncorrectData
+        - CorrectData
+        - Geocoding
+        - Geocoded
+        - NotGeocoded
+        - Allocating
+        - Allocated
+        - NotAllocated
+        - TimeZoneCorrecting
+        - TimeZoneCorrected
+        - TimeZoneNotCorrected
+        - ReadyForPlanning
+        - ReadyForAssigning
+        - Planning
+        - Planned
+        - Loaded
+        - OnItsWay
+        - Arriving
+        - Arrived
+        - Started
+        - Completed
+        - Cancelled
+        - Pending
+        - NotPlanned
+    ServiceInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          properties:
+            DeliveryPrice:
+              type: number
+              format: decimal
+            LiftupPrice:
+              type: number
+              format: decimal
+            ExternalId:
+              type: string
+              nullable: true
+            Name:
+              type: string
+              nullable: true
+            Article:
+              type: string
+              nullable: true
+            Note:
+              type: string
+              nullable: true
+            Unit:
+              type: string
+              nullable: true
+            Quantity:
+              type: number
+              format: decimal
+            Price:
+              type: number
+              format: decimal
+            PriceWithoutTax:
+              type: number
+              format: decimal
+            Tax:
+              type: number
+              format: decimal
+            TaxRate:
+              type: number
+              format: decimal
+            AcceptedInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/AcceptedInfo'
+    AcceptedInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - AcceptedQuantity
+          properties:
+            AcceptedQuantity:
+              type: number
+              format: decimal
+    Confirmation:
+      type: object
+      additionalProperties: false
+      properties:
+        RatingInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/RatingInfo'
+        OnCompleteStatePositionInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/OnCompleteStatePositionInfo'
+        PhotosInfo:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/PhotoInfo'
+    RatingInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - Rating
+          properties:
+            Rating:
+              type: integer
+              format: int32
+    OnCompleteStatePositionInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - Longitude
+            - Latitude
+          properties:
+            Longitude:
+              type: number
+              format: double
+            Latitude:
+              type: number
+              format: double
+    PhotoInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - Number
+            - PhotoSize
+            - PhotoType
+            - Path
+          properties:
+            Number:
+              type: integer
+              format: int32
+            PhotoSize:
+              $ref: '#/components/schemas/PhotoSize'
+            PhotoType:
+              $ref: '#/components/schemas/PhotoType'
+            Path:
+              type: string
+              minLength: 1
+    PhotoSize:
+      type: string
+      description: ''
+      x-enumNames:
+        - Preview
+        - Original
+      enum:
+        - Preview
+        - Original
+    PhotoType:
+      type: string
+      description: ''
+      x-enumNames:
+        - ProofPhoto
+        - Signature
+      enum:
+        - ProofPhoto
+        - Signature
+    Payment:
+      type: object
+      additionalProperties: false
+      properties:
+        PaymentStateInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/PaymentStateInfo'
+        Payments:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/PaymentInfo'
+        PreferredPaymentMethods:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/PreferredPaymentMethodInfo'
+    PaymentStateInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          properties:
+            PaymentState:
+              $ref: '#/components/schemas/PaymentState'
+    PaymentState:
+      type: string
+      description: ''
+      x-enumNames:
+        - NotPayed
+        - Payed
+        - Prepayed
+      enum:
+        - NotPayed
+        - Payed
+        - Prepayed
+    PaymentInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          properties:
+            PaymentType:
+              $ref: '#/components/schemas/PaymentType'
+            CashRegister:
+              type: string
+              nullable: true
+            Description:
+              type: string
+              nullable: true
+            Sum:
+              type: number
+              format: decimal
+    PaymentType:
+      type: string
+      description: ''
+      x-enumNames:
+        - Default
+        - Cash
+        - Card
+        - Prepayed
+      enum:
+        - Default
+        - Cash
+        - Card
+        - Prepayed
+    PreferredPaymentMethodInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - PaymentType
+          properties:
+            PaymentType:
+              $ref: '#/components/schemas/PreferredPaymentType'
+    PreferredPaymentType:
+      type: string
+      description: ''
+      x-enumNames:
+        - Cash
+        - Card
+      enum:
+        - Cash
+        - Card
+    ProductInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          properties:
+            ExternalId:
+              type: string
+              nullable: true
+            Name:
+              type: string
+              nullable: true
+            Article:
+              type: string
+              nullable: true
+            Note:
+              type: string
+              nullable: true
+            PhotoUrl:
+              type: string
+              nullable: true
+            Unit:
+              type: string
+              nullable: true
+            Quantity:
+              type: number
+              format: decimal
+            Volume:
+              type: number
+              format: decimal
+            Weight:
+              type: number
+              format: decimal
+            Price:
+              type: number
+              format: decimal
+            PriceWithoutTax:
+              type: number
+              format: decimal
+            Tax:
+              type: number
+              format: decimal
+            TaxRate:
+              type: number
+              format: decimal
+            Description:
+              type: string
+              nullable: true
+            AcceptedInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/AcceptedInfo'
+            LoadedInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/LoadedInfo'
+            SerialNumberInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/SerialNumberInfo'
+    LoadedInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - LoadedQuantity
+          properties:
+            LoadedQuantity:
+              type: number
+              format: decimal
+    SerialNumberInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - Number
+          properties:
+            Number:
+              type: string
+    CommentInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          properties:
+            Title:
+              type: string
+              nullable: true
+            CommentType:
+              $ref: '#/components/schemas/CommentType'
+            Comment:
+              type: string
+              nullable: true
+    CommentType:
+      type: string
+      description: ''
+      x-enumNames:
+        - Initial
+        - Manager
+        - Driver
+        - Link
+        - Rating
+        - Client
+      enum:
+        - Initial
+        - Manager
+        - Driver
+        - Link
+        - Rating
+        - Client
+    TacticalLegInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - TacticalLegId
+          properties:
+            TacticalLegId:
+              type: string
+              format: guid
+              minLength: 1
+    TagInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          properties:
+            Type:
+              type: string
+              nullable: true
+            Value:
+              type: string
+              nullable: true
+    VerifiedInfo:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          properties:
+            LoadTimeSlot:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/LoadTimeSlotOffset'
+            ReturnTimeSlot:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/ReturnTimeSlotOffset'
+            DeliveryTimeSlot:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/DeliveryTimeSlotOffset'
+            PickupTimeSlot:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/PickupTimeSlotOffset'
+    LoadTimeSlotOffset:
+      allOf:
+        - $ref: '#/components/schemas/VerifiedTimeSlotOffset'
+        - type: object
+          additionalProperties: false
+    VerifiedTimeSlotOffset:
+      allOf:
+        - $ref: '#/components/schemas/TimeSlotOffset'
+        - type: object
+          additionalProperties: false
+          required:
+            - TimeZone
+            - LocalFrom
+            - LocalTo
+          properties:
+            TimeZone:
+              type: string
+              minLength: 1
+            LocalFrom:
+              type: string
+              format: date-time
+              minLength: 1
+            LocalTo:
+              type: string
+              format: date-time
+              minLength: 1
+    TimeSlotOffset:
+      allOf:
+        - $ref: '#/components/schemas/Entity'
+        - type: object
+          additionalProperties: false
+          required:
+            - From
+            - To
+          properties:
+            From:
+              type: string
+              format: date-time
+              minLength: 1
+            To:
+              type: string
+              format: date-time
+              minLength: 1
+    ReturnTimeSlotOffset:
+      allOf:
+        - $ref: '#/components/schemas/VerifiedTimeSlotOffset'
+        - type: object
+          additionalProperties: false
+    DeliveryTimeSlotOffset:
+      allOf:
+        - $ref: '#/components/schemas/VerifiedTimeSlotOffset'
+        - type: object
+          additionalProperties: false
+    PickupTimeSlotOffset:
+      allOf:
+        - $ref: '#/components/schemas/VerifiedTimeSlotOffset'
+        - type: object
+          additionalProperties: false
+    OrderStateChangeInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - reason
+      properties:
+        reason:
+          type: string
+          minLength: 1
+        comment:
+          type: string
+          nullable: true
+    LastModifiedStates:
+      type: object
+      additionalProperties: false
+      properties:
+        searchDate:
+          type: string
+          format: date-time
+        data:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/OrderInfoWithHistoryModelOfStateInfo'
+    OrderInfoWithHistoryModelOfStateInfo:
+      type: object
+      additionalProperties: false
+      properties:
+        OrderId:
+          type: string
+          format: guid
+        OrderInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/OrderInfo'
+        History:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/StateInfo'
+    LoadCompleteInfo:
+      allOf:
+        - $ref: '#/components/schemas/OrderTaskCompleteInfo'
+        - type: object
+          additionalProperties: false
+          properties:
+            products:
+              type: array
+              nullable: true
+              items:
+                $ref: '#/components/schemas/LoadedEntity'
+    LoadedEntity:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: guid
+          minLength: 1
+        loadedInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/LoadedInfo2'
+    LoadedInfo2:
+      type: object
+      additionalProperties: false
+      required:
+        - loadedQuantity
+      properties:
+        loadedQuantity:
+          type: integer
+          format: int32
+    OrderTaskCompleteInfo:
+      type: object
+      additionalProperties: false
+      properties:
+        comment:
+          type: string
+          nullable: true
+    DeliveryCompleteInfo:
+      allOf:
+        - $ref: '#/components/schemas/OrderTaskCompleteInfo'
+        - type: object
+          additionalProperties: false
+          properties:
+            products:
+              type: array
+              nullable: true
+              items:
+                $ref: '#/components/schemas/AcceptedEntity'
+            services:
+              type: array
+              nullable: true
+              items:
+                $ref: '#/components/schemas/AcceptedEntity'
+            paymentInfo:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/PaymentInfo2'
+    AcceptedEntity:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: guid
+          minLength: 1
+        acceptedInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/AcceptedInfo2'
+    AcceptedInfo2:
+      type: object
+      additionalProperties: false
+      required:
+        - acceptedQuantity
+      properties:
+        acceptedQuantity:
+          type: integer
+          format: int32
+    PaymentInfo2:
+      type: object
+      additionalProperties: false
+      required:
+        - paymentType
+        - sum
+      properties:
+        paymentType:
+          type: string
+          minLength: 1
+        sum:
+          type: number
+          format: decimal
+    QuiltPaymentStateInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentStateInfo'
+        - type: object
+          additionalProperties: false
+    QuiltPaymentInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentInfo'
+        - type: object
+          additionalProperties: false
+    CompanyPerson:
+      type: object
+      additionalProperties: false
+      properties:
+        Id:
+          type: string
+          format: guid
+        Username:
+          type: string
+          nullable: true
+        CompanyId:
+          type: string
+          format: guid
+        Position:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/Position'
+    Position:
+      type: object
+      additionalProperties: false
+      properties:
+        PersonId:
+          type: string
+          format: guid
+        Latitude:
+          type: number
+          format: double
+        Longitude:
+          type: number
+          format: double
+        CreatedOn:
+          type: string
+          format: date-time
+    ModelStateDictionary:
+      type: object
+      additionalProperties: false
+      properties:
+        Root:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/ModelStateEntry'
+        MaxAllowedErrors:
+          type: integer
+          format: int32
+        HasReachedMaxErrors:
+          type: boolean
+        ErrorCount:
+          type: integer
+          format: int32
+        Count:
+          type: integer
+          format: int32
+        Keys:
+          type: array
+          items:
+            type: string
+        Values:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModelStateEntry'
+        IsValid:
+          type: boolean
+        ValidationState:
+          $ref: '#/components/schemas/ModelValidationState'
+        Item:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/ModelStateEntry'
+    ModelStateEntry:
+      type: object
+      x-abstract: true
+      additionalProperties: false
+      properties:
+        RawValue:
+          nullable: true
+        AttemptedValue:
+          type: string
+          nullable: true
+        Errors:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/ModelErrorCollection'
+        ValidationState:
+          $ref: '#/components/schemas/ModelValidationState'
+    ModelErrorCollection:
+      type: array
+      items:
+        $ref: '#/components/schemas/ModelError'
+    ModelError:
+      type: object
+      additionalProperties: false
+      properties:
+        Exception:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/Exception'
+        ErrorMessage:
+          type: string
+          nullable: true
+    Exception:
+      type: object
+      additionalProperties: false
+      properties:
+        Message:
+          type: string
+          nullable: true
+        InnerException:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/Exception'
+        StackTrace:
+          type: string
+          nullable: true
+        Source:
+          type: string
+          nullable: true
+    ModelValidationState:
+      type: string
+      description: ''
+      x-enumNames:
+        - Unvalidated
+        - Invalid
+        - Valid
+        - Skipped
+      enum:
+        - Unvalidated
+        - Invalid
+        - Valid
+        - Skipped
+    BetModel:
+      type: object
+      additionalProperties: false
+      required:
+        - Bidder
+        - Price
+        - CreatedOn
+      properties:
+        Bidder:
+          $ref: '#/components/schemas/BidderInfo'
+        Price:
+          type: number
+          format: decimal
+        CreatedOn:
+          type: string
+          format: date-time
+          minLength: 1
+    BidderInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - Id
+      properties:
+        Id:
+          type: string
+          format: guid
+          minLength: 1
+        Name:
+          type: string
+          nullable: true
+    AddBetToRouteLotRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - Price
+      properties:
+        Price:
+          type: number
+          format: decimal
+    RouteLot:
+      type: object
+      additionalProperties: false
+      required:
+        - Id
+        - Audit
+        - LotInfo
+        - StateInfo
+        - Path
+        - Routes
+        - TransportRestrictionsInfo
+        - Bets
+        - BetsHistory
+      properties:
+        Id:
+          type: string
+          format: guid
+          minLength: 1
+        Audit:
+          $ref: '#/components/schemas/AuditModel'
+        LotInfo:
+          $ref: '#/components/schemas/RouteLotInfo'
+        StateInfo:
+          $ref: '#/components/schemas/RouteLotStateInfo'
+        Path:
+          $ref: '#/components/schemas/RouteLotPath'
+        Routes:
+          type: array
+          items:
+            $ref: '#/components/schemas/RouteBiddingItem'
+        TransportRestrictionsInfo:
+          $ref: '#/components/schemas/TransportRestrictionsInfoModel'
+        Bets:
+          type: array
+          items:
+            $ref: '#/components/schemas/BetModel'
+        BetsHistory:
+          type: array
+          items:
+            $ref: '#/components/schemas/BetModel'
+        BestBet:
+          type: number
+          format: decimal
+          nullable: true
+    AuditModel:
+      type: object
+      additionalProperties: false
+      properties:
+        Initiator:
+          type: string
+          format: guid
+        Source:
+          type: string
+          nullable: true
+        Description:
+          type: string
+          nullable: true
+        Comment:
+          type: string
+          nullable: true
+        CreatedOn:
+          type: string
+          format: date-time
+        LoggedOn:
+          type: string
+          format: date-time
+    RouteLotInfo:
+      allOf:
+        - $ref: '#/components/schemas/RouteLotMetaInfo'
+        - type: object
+          additionalProperties: false
+          required:
+            - Id
+          properties:
+            Id:
+              type: string
+              format: guid
+              minLength: 1
+            Audit:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/AuditModel'
+    RouteLotMetaInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - StartTime
+        - EndTime
+      properties:
+        ExternalId:
+          type: string
+          nullable: true
+        ThresholdPrice:
+          type: number
+          format: decimal
+          nullable: true
+        StartPrice:
+          type: number
+          format: decimal
+          nullable: true
+        BlitzBetPrice:
+          type: number
+          format: decimal
+          nullable: true
+        Description:
+          type: string
+          nullable: true
+        StartTime:
+          type: string
+          format: date-time
+          minLength: 1
+        EndTime:
+          type: string
+          format: date-time
+          minLength: 1
+    RouteLotStateInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - State
+        - StateType
+      properties:
+        State:
+          $ref: '#/components/schemas/BiddingLotState'
+        StateType:
+          $ref: '#/components/schemas/BiddingLotStateType'
+    BiddingLotState:
+      type: string
+      description: ''
+      x-enumNames:
+        - Created
+        - Started
+        - Summarizing
+        - Completed
+        - Cancelled
+      enum:
+        - Created
+        - Started
+        - Summarizing
+        - Completed
+        - Cancelled
+    BiddingLotStateType:
+      type: string
+      description: ''
+      x-enumNames:
+        - None
+        - Successful
+        - NoBets
+        - OverThreshold
+      enum:
+        - None
+        - Successful
+        - NoBets
+        - OverThreshold
+    RouteLotPath:
+      type: object
+      additionalProperties: false
+      required:
+        - Start
+        - End
+      properties:
+        Start:
+          $ref: '#/components/schemas/RouteLotPathPoint'
+        End:
+          $ref: '#/components/schemas/RouteLotPathPoint'
+    RouteLotPathPoint:
+      type: object
+      additionalProperties: false
+      required:
+        - ArrivalTime
+        - LocationName
+      properties:
+        ArrivalTime:
+          type: string
+          format: date-time
+          minLength: 1
+        LocationName:
+          type: string
+          minLength: 1
+        LocationInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/LocationInfo'
+    RouteBiddingItem:
+      type: object
+      additionalProperties: false
+      properties:
+        Id:
+          type: string
+          format: guid
+        Name:
+          type: string
+          nullable: true
+        CompanyInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/CompanyInfoModel'
+        DeliveryRoutePoints:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/RoutePointModel'
+    CompanyInfoModel:
+      type: object
+      additionalProperties: false
+      properties:
+        CompanyId:
+          type: string
+          format: guid
+        CompanyName:
+          type: string
+          nullable: true
+    RoutePointModel:
+      type: object
+      additionalProperties: false
+      properties:
+        Id:
+          type: string
+          format: guid
+        Audit:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/AuditModel'
+        AddressInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/AddressInfoModel'
+    AddressInfoModel:
+      type: object
+      additionalProperties: false
+      properties:
+        FullAddress:
+          type: string
+          nullable: true
+        Country:
+          type: string
+          nullable: true
+        PostalCode:
+          type: string
+          nullable: true
+        Region:
+          type: string
+          nullable: true
+        District:
+          type: string
+          nullable: true
+        Town:
+          type: string
+          nullable: true
+        TownRegion:
+          type: string
+          nullable: true
+        Street:
+          type: string
+          nullable: true
+        Station:
+          type: string
+          nullable: true
+        Building:
+          type: string
+          nullable: true
+        Housing:
+          type: string
+          nullable: true
+        Porch:
+          type: string
+          nullable: true
+        Floor:
+          type: string
+          nullable: true
+        Room:
+          type: string
+          nullable: true
+    TransportRestrictionsInfoModel:
+      type: object
+      additionalProperties: false
+      required:
+        - TransportRestrictions
+      properties:
+        LoadUnloadType:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/LoadUnloadType'
+        TransportRestrictions:
+          type: array
+          items:
+            type: string
+    LoadUnloadType:
+      type: string
+      description: ''
+      x-enumNames:
+        - SingleSide
+        - BothSide
+        - Back
+        - Top
+        - TwoLevel
+      enum:
+        - SingleSide
+        - BothSide
+        - Back
+        - Top
+        - TwoLevel
+    CreateRouteLotRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - LotInfo
+        - RouteIds
+      properties:
+        LotInfo:
+          $ref: '#/components/schemas/RouteLotCreationInfo'
+        RouteIds:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            format: guid
+    RouteLotCreationInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - EndTime
+      properties:
+        ExternalId:
+          type: string
+          nullable: true
+        ThresholdPrice:
+          type: number
+          format: decimal
+          nullable: true
+        StartPrice:
+          type: number
+          format: decimal
+          nullable: true
+        BlitzBetPrice:
+          type: number
+          format: decimal
+          nullable: true
+        Description:
+          type: string
+          maxLength: 500
+          nullable: true
+        StartTime:
+          type: string
+          format: date-time
+          nullable: true
+        EndTime:
+          type: string
+          format: date-time
+          minLength: 1
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      description: Please insert Atlas.Auth token into field
+      name: Authorization
+      in: header
+security:
+  - Bearer: []
